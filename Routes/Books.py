@@ -1,39 +1,32 @@
+# TODO: Check why he wrote that /books is a resource (slide 6)
 # TODO: sort by a,b,c in all files, remove unneccesarry imports
 # TODO: add return type to all functions
 from Collections.BooksCollection import BooksCollection
+from Services.DataValidator import DataValidator
 from flask_restful import Resource
 from flask import request
+# TODO: Check if it should be here and not injected (I think it's good like that)
+from Exceptions.InvalidRequestBodyException import InvalidRequestBodyException
 
 class Books(Resource):        
-    def __init__(self, booksCollection: BooksCollection) -> None:
+    def __init__(self, booksCollection: BooksCollection, dataValidator: DataValidator) -> None:
+        # TODO: Check if it creates a new instance of booksCollection and dataValidator
         self.booksCollection = booksCollection()
+        self.dataValidator = dataValidator()
     
     def post(self) -> str:
-        requestBody = request.get_json()
-        postRequestBodyValidationResult = self.validatePostRequestBody(requestBody)
-        
-        if postRequestBodyValidationResult != "Valid post request body":
-            return postRequestBodyValidationResult, 400
-        
-        title, ISBN, genre = requestBody["title"], requestBody["ISBN"], requestBody["genre"]
-        newBookId = self.booksCollection.insertBookAndReturnId(title, ISBN, genre)
-        
-        return newBookId, 201
-    
-    
-    # TODO: Should be here?
-    def validatePostRequestBody(self, requestBody: dict) -> str:
         try:
-            title = requestBody["title"]
-        except KeyError:
-            return "There is a missing title parameter in your request body"
-        try:
-            ISBN = requestBody["ISBN"]
-        except KeyError:
-            return "There is a missing ISBN parameter in your request body"
-        try:
-            genre = requestBody["genre"]
-        except KeyError:
-            return "There is a missing genre parameter in your request body"
+            requestBody = request.get_json()
+            self.dataValidator.validateBooksPostRequestBody(requestBody)
+            newBookId = self.booksCollection.insertBookAndReturnId(requestBody)    
+            return newBookId, 201
         
-        return "Valid post request body"
+        except InvalidRequestBodyException as error:
+            return "Bad request: " + error.message, 400
+            
+
+        # TODO: Except more specific errors
+        # TODO: Check if errors like unparseable json which returns 405 should be handeled
+            
+    def get(self) -> str:
+        return self.booksCollection.collection

@@ -1,15 +1,27 @@
-import uuid
+from Services.ApiInvoker import ApiInvoker
+# TODO: What is Provide and inject for?
+from dependency_injector.wiring import Provide, inject
+from Exceptions.NoMatchingItemsInApiGetCallException import NoMatchingItemsInApiGetCallException
+from Services.RequestsDataHandler import RequestsDataHandler
 
 class BooksCollection():
     # TODO: Is this a good practice to return None from constructor?
-    def __init__(self) -> None:
+    def __init__(self, requestsDataHandler: RequestsDataHandler) -> None:
         self.numberOfOperationsSoFar = 0
-        self.collection = {}
+        self.collection = []
+        # TODO: should I add underscore before variable name?
+        self.requestsDataHandler = requestsDataHandler
         
-    def insertBookAndReturnId(self, title: str, ISBN: str, genre: str) -> str:
+    # TODO: Change to "retreiveDataAndInsert..."" and split the retrieving and the insertion
+    def insertBookAndReturnId(self, requestBody: dict) -> str:
         # TODO: Add logic here
-        self.numberOfOperationsSoFar += 1
-        id = str(uuid.uuid4())
-        return id
+        try:
+            self.numberOfOperationsSoFar += 1
+            requestWithFullData = self.requestsDataHandler.handlePostRequestToBooks(requestBody)
+            self.collection.append(requestWithFullData)
+            id = requestWithFullData["id"]
+            return id
+        except NoMatchingItemsInApiGetCallException as error:
+            return requestBody
         
-    
+        
