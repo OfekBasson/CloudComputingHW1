@@ -1,10 +1,10 @@
+# TODO: Go over the lectures slides and make sure everything is implemented as suggested there
 import requests
 from Exceptions.NoMatchingItemsInApiGetCallException import NoMatchingItemsInApiGetCallException
 import google.generativeai as genai
 import os
 
 class ApiInvoker:
-    
     def sendGetRequestToGoogleBooksApiAndReturnBookData(self, isbn: str) -> dict:
         googleBooksUrl = f'https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}'
         response = requests.get(googleBooksUrl)
@@ -35,8 +35,7 @@ class ApiInvoker:
         except:
             if response.json()['numFound'] == 0:
                 raise NoMatchingItemsInApiGetCallException(f"No items returned from OpenApiLibrary for given ISBN number ({isbn})")
-        # TODO: Change the empty return. Maybe the return should be at the end of the function
-        return []
+            # TODO: What if the numFound isn't 0?
             
     def sendGetRequestToGOogleGenAIAndReturnBookSummary(self, bookName: str, authorName: str) -> str:
         try:

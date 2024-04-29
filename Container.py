@@ -3,7 +3,7 @@ from dependency_injector import containers, providers
 from Collections.BooksCollection import BooksCollection
 from Services.DataValidator import DataValidator
 from Services.ApiInvoker import ApiInvoker
-from Services.RequestsDataHandler import RequestsDataHandler
+from Services.DataProcessor import DataProcessor
 
 class Container(containers.DeclarativeContainer):
     # TODO: Add urls to config
@@ -13,14 +13,14 @@ class Container(containers.DeclarativeContainer):
         ApiInvoker
     )
     
-    requestsDataHandler = providers.Singleton(
-        RequestsDataHandler,
+    dataProcessor = providers.Singleton(
+        DataProcessor,
         apiInvoker=apiInvoker
     )
     
     booksCollection = providers.Singleton(
         BooksCollection,
-        requestsDataHandler=requestsDataHandler
+        DataProcessor=dataProcessor
     )
     
     dataValidator = providers.Singleton(

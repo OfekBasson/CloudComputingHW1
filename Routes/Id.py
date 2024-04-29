@@ -5,7 +5,8 @@ from dependency_injector.wiring import Provide, inject
 
 class Id(Resource):
     def __init__(self, booksCollection: BooksCollection) -> None:
-        self.booksCollection = booksCollection()
+        # TODO: Check if it creates another one
+        self._booksCollection = booksCollection()
     
     def get(self) -> str:
         return "", 200
