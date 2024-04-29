@@ -18,7 +18,8 @@ class Books(Resource):
         self._parser = reqparse.RequestParser()
         self.__addArgumentsToParser()
     
-    def post(self) -> str:
+    def post(self) -> tuple:
+        # TODO: Should a book which was entered twice appear twice in the booksCollection?
         print("Called post on Books resource")
         try:
             requestBody = request.get_json()
@@ -31,8 +32,8 @@ class Books(Resource):
         # TODO: Except more specific errors
         # TODO: Check if errors like unparseable json which returns 405 should be handeled
             
-    def get(self) -> str:
-        # TODO: Input tests (query is valid for example)
+    def get(self) -> tuple:
+        # TODO: Input tests (query is valid for example, only one string in language/authors/,,,)
         try:
             print("Called get on Books resource")
             query = self._parser.parse_args()

@@ -3,6 +3,7 @@ from Services.ApiInvoker import ApiInvoker
 from dependency_injector.wiring import Provide, inject
 from Exceptions.NoMatchingItemsInApiGetCallException import NoMatchingItemsInApiGetCallException
 from Exceptions.EmptyCollectionException import EmptyCollectionException
+from Exceptions.NoMatchingItemException import NoMatchingItemException
 from Services.DataProcessor import DataProcessor
 
 class BooksCollection():
@@ -40,15 +41,35 @@ class BooksCollection():
         for queryKey, queryValue in query.items():
             if queryValue is not None:
                 print(f"Inside 'getCollectionFilteredByQuery' (function of 'BooksCollection'). Filtering now by '{queryKey}': '{queryValue}'")
-                collectionCopy = list(filter(lambda document: self.isQueryParameterSatisfiedByDocument(document, queryKey, queryValue), collectionCopy))
+                collectionCopy = list(filter(lambda document: self.__isQueryParameterSatisfiedByDocument(document, queryKey, queryValue), collectionCopy))
                 print(f"Finished filtering for '{queryKey}': '{queryValue}'. There are {len(collectionCopy)} books which matches the criteria so far")
         
         if len(collectionCopy) == 0:
             raise EmptyCollectionException("There are no books matching your criteria")
         
         return collectionCopy
+    
+    def getBookById(self, id: str) -> dict:
+        try:
+            book = self.getCollectionFilteredByQuery({"id": id})[0]
+            return book
+        except EmptyCollectionException as error:
+            raise NoMatchingItemException("There is no matching book to the provided id")
+        
+    def deleteBookById(self, id: str) -> str:
+        # TODO: If it doesn't exist in the collection - should I return the same collection?
+        originalCollectionLength = len(self._collection)
+        self._collection = [document for document in self._collection if document["id"] != id]
+        if len(self._collection) == originalCollectionLength:
+            raise NoMatchingItemException("The id which was asked to be deleted doesn't exist")
+        return id
+    
+    def updateSpecificDocumentFromCollection(self, idOfDocumentToUpdate: str, requestBody: dict) -> str:
+        self.deleteBookById(idOfDocumentToUpdate)
+        self._collection.append(requestBody)
+        return idOfDocumentToUpdate
                 
-    def isQueryParameterSatisfiedByDocument(self, document: dict, queryKey: str, queryValue: str) -> bool:
+    def __isQueryParameterSatisfiedByDocument(self, document: dict, queryKey: str, queryValue: str) -> bool:
         documentValue = document[queryKey]
         if type(documentValue) is list:
             return queryValue in documentValue

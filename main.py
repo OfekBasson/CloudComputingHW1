@@ -15,7 +15,7 @@ def main() -> None:
     api = Api(app)
 
     api.add_resource(Books, '/books', resource_class_kwargs={'booksCollection': container.booksCollection, 'dataValidator': container.dataValidator})
-    api.add_resource(Id, '/books/id', resource_class_kwargs={'booksCollection': container.booksCollection})
+    api.add_resource(Id, '/books/<string:id>', resource_class_kwargs={'booksCollection': container.booksCollection, 'dataValidator': container.dataValidator})
     
     app.run(host='0.0.0.0', port=8000, debug=True)
     
