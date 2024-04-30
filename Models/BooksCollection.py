@@ -5,15 +5,17 @@ from Exceptions.NoMatchingItemsInApiGetCallException import NoMatchingItemsInApi
 from Exceptions.EmptyCollectionException import EmptyCollectionException
 from Exceptions.NoMatchingItemException import NoMatchingItemException
 from Services.DataProcessor import DataProcessor
+import asyncio
 
 class BooksCollection():
     # TODO: Is this a good practice to return None from constructor?
-    def __init__(self, DataProcessor: DataProcessor) -> None:
-        # TODO: Add reference to numberOfOperations in every operation
+    def __init__(self, dataProcessor: DataProcessor) -> None:
+        # TODO: Add reference to numberOfOperations in eve1ry operation
+        # TODO: What is the _numberOfOperationsSoFar for?
         self._numberOfOperationsSoFar = 0
         self._collection = []
         # TODO: should I add underscore before variable name?
-        self._dataProcessor = DataProcessor
+        self._dataProcessor = dataProcessor
         
     # TODO: Change to "retreiveDataAndInsert..."" and split the retrieving and the insertion
     def insertBookAndReturnId(self, requestBody: dict) -> str:
@@ -27,7 +29,7 @@ class BooksCollection():
             return id
             # return ""
         # TODO: print error message?
-        except NoMatchingItemsInApiGetCallException as error:
+        except NoMatchingItemsInApiGetCallException as exception:
             return requestBody
         
     
@@ -50,11 +52,20 @@ class BooksCollection():
         return collectionCopy
     
     def getBookById(self, id: str) -> dict:
+        print(f"Entered 'getBookById' (function of 'BooksCollection') with id: {id}")
         try:
             book = self.getCollectionFilteredByQuery({"id": id})[0]
             return book
-        except EmptyCollectionException as error:
+        except EmptyCollectionException as exception:
             raise NoMatchingItemException("There is no matching book to the provided id")
+        
+    def doBookWithGivenIsbnAlreadyExist(self, isbn: str) -> bool:
+        print(f"Entered 'doBookWithGivenIsbnAlreadyExist' (function of 'BooksCollection')")
+        try:
+            book = self.getCollectionFilteredByQuery({"ISBN": isbn})[0]
+            return False
+        except (NoMatchingItemException, EmptyCollectionException) as exception:
+            return True
         
     def deleteBookById(self, id: str) -> str:
         # TODO: If it doesn't exist in the collection - should I return the same collection?
@@ -71,6 +82,7 @@ class BooksCollection():
                 
     def __isQueryParameterSatisfiedByDocument(self, document: dict, queryKey: str, queryValue: str) -> bool:
         documentValue = document[queryKey]
+        # TODO: It won't be language. How does if influence (I think authors is also a list)??? Slide 19 is not clear
         if type(documentValue) is list:
             return queryValue in documentValue
         return documentValue == queryValue

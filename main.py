@@ -1,10 +1,13 @@
 from flask import Flask
 # TODO: are all those imports necessary?
 from flask_restful import Api
-from Routes.Books import Books
-from Routes.Id import Id
+from Resources.Books import Books
+from Resources.Id import Id
+from Resources.RatingId import RatingId
+from Resources.Top import Top
+from Resources.Values import Values
 from Container import Container
-from Collections.BooksCollection import BooksCollection
+from Models.BooksCollection import BooksCollection
 # TODO: Check why the Provide isn't in use
 from dependency_injector.wiring import Provide, inject
 
@@ -16,6 +19,9 @@ def main() -> None:
 
     api.add_resource(Books, '/books', resource_class_kwargs={'booksCollection': container.booksCollection, 'dataValidator': container.dataValidator})
     api.add_resource(Id, '/books/<string:id>', resource_class_kwargs={'booksCollection': container.booksCollection, 'dataValidator': container.dataValidator})
+    api.add_resource(RatingId, '/rating/<string:id>', resource_class_kwargs={'ratingsCollection': container.ratingsCollection})
+    api.add_resource(Top, '/top', resource_class_kwargs={'ratingsCollection': container.ratingsCollection})
+    api.add_resource(Values, '//rating/<string:id>/values', resource_class_kwargs={'ratingsCollection': container.ratingsCollection})
     
     app.run(host='0.0.0.0', port=8000, debug=True)
     

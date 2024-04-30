@@ -1,6 +1,7 @@
 import uuid
 from Services.ApiInvoker import ApiInvoker
 from Exceptions.NoMatchingItemsInApiGetCallException import NoMatchingItemsInApiGetCallException
+import asyncio
 
 class DataProcessor():
     
@@ -14,6 +15,8 @@ class DataProcessor():
         try:
             isbn = partialBookData["ISBN"]            
             
+            # TODO: add asynchronous handling
+            # bookData, language, summary = await asyncio.gather((self.__getBookData(isbn), self.__getLanguage(isbn), self.__getBookSummary(partialBookData["title"], bookData["authors"])))
             bookData = self.__getBookData(isbn)
             language = self.__getLanguage(isbn)
             summary = self.__getBookSummary(partialBookData["title"], bookData["authors"])
@@ -23,8 +26,8 @@ class DataProcessor():
             return fullData
             
         # TODO: Change handling to more specific row... return something
-        except Exception as error:
-            print(error)
+        except Exception as exception:
+            print(exception)
             pass
         
     def __combineDataFromRequestAndApiCalls(self, requestBody: dict, bookData: dict, language: list, summary: str) -> dict:
@@ -42,7 +45,7 @@ class DataProcessor():
             for key in bookData:
                 if bookData[key] == "":
                     bookData[key] = "missing"
-        except NoMatchingItemsInApiGetCallException as error:
+        except NoMatchingItemsInApiGetCallException as exception:
             bookData = {
             "authors": "missing",
             "publisher": "missing",
