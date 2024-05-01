@@ -4,7 +4,7 @@
 from Models.BooksCollection import BooksCollection
 from Services.DataValidator import DataValidator
 from flask_restful import Resource, reqparse
-from flask import request, jsonify
+from flask import request
 # TODO: Check if it should be here and not injected (I think it's good like that)
 from Exceptions.InvalidRequestBodyException import InvalidRequestBodyException
 from Exceptions.UnsupportedMediaTypeException import UnsupportedMediaTypeException
@@ -26,7 +26,7 @@ class Books(Resource):
         try:
             requestBody = request.get_json(silent=True)
             self._dataValidator.validateBooksPostRequestBody(requestBody)
-            if not self._booksCollection.doBookWithGivenIsbnAlreadyExist(requestBody["ISBN"]):
+            if self._booksCollection.doBookWithGivenIsbnAlreadyExist(requestBody["ISBN"]):
                 raise InvalidRequestBodyException("A book with the same ISBN already exist in the collection")
             newBookId = self._booksCollection.insertBookAndReturnId(requestBody)
             return newBookId, 201
@@ -43,10 +43,10 @@ class Books(Resource):
         # TODO: Check if errors like unparseable json which returns 405 should be handeled
             
     def get(self) -> tuple:
-        # TODO: Input tests (query is valid for example, only one string in language/authors/,,,)
         try:
             print("Called get on Books resource")
             query = self._parser.parse_args()
+            # TODO: Input tests (query isn't valid for example, only one string in language/authors/,,,)
             collection = self._booksCollection.getCollectionFilteredByQuery(query)
             if collection == []:
                 # TODO: should it be 204 (The request was successful but the response has no content)?

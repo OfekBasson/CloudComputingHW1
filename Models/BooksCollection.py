@@ -5,17 +5,18 @@ from Exceptions.NoMatchingItemsInApiGetCallException import NoMatchingItemsInApi
 from Exceptions.EmptyCollectionException import EmptyCollectionException
 from Exceptions.NoMatchingItemException import NoMatchingItemException
 from Services.DataProcessor import DataProcessor
-import asyncio
+from Models.RatingsCollection import RatingsCollection
 
 class BooksCollection():
     # TODO: Is this a good practice to return None from constructor?
-    def __init__(self, dataProcessor: DataProcessor) -> None:
+    def __init__(self, dataProcessor: DataProcessor, ratingsCollection: RatingsCollection) -> None:
         # TODO: Add reference to numberOfOperations in eve1ry operation
         # TODO: What is the _numberOfOperationsSoFar for?
         self._numberOfOperationsSoFar = 0
         self._collection = []
         # TODO: should I add underscore before variable name?
         self._dataProcessor = dataProcessor
+        self._ratingsCollection = ratingsCollection
         
     # TODO: Change to "retreiveDataAndInsert..."" and split the retrieving and the insertion
     def insertBookAndReturnId(self, requestBody: dict) -> str:
@@ -23,9 +24,10 @@ class BooksCollection():
         print(f"Inside 'insertBookAndReturnId' (function of 'BooksCollection). requestBody is: {requestBody}")
         try:
             self._numberOfOperationsSoFar += 1
-            requestWithFullData = self._dataProcessor.constructFullBookData(requestBody)
-            self._collection.append(requestWithFullData)
-            id = requestWithFullData["id"]
+            fullBookData = self._dataProcessor.constructFullBookData(requestBody)
+            self._collection.append(fullBookData)
+            self._ratingsCollection.createNewRating(fullBookData)
+            id = fullBookData["id"]
             return id
             # return ""
         # TODO: print error message?
@@ -35,6 +37,7 @@ class BooksCollection():
     
     def getCollectionFilteredByQuery(self, query: dict) -> list:
         print(f"Inside 'getCollectionFilteredByQuery' (function of 'BooksCollection'). Query is: {query}")
+        # TODO: Is numOps relevant?
         self._numberOfOperationsSoFar += 1
         if len(self._collection) == 0:
             raise EmptyCollectionException("The collection is empty")
@@ -63,9 +66,9 @@ class BooksCollection():
         print(f"Entered 'doBookWithGivenIsbnAlreadyExist' (function of 'BooksCollection')")
         try:
             book = self.getCollectionFilteredByQuery({"ISBN": isbn})[0]
-            return False
-        except (NoMatchingItemException, EmptyCollectionException) as exception:
             return True
+        except (NoMatchingItemException, EmptyCollectionException) as exception:
+            return False
         
     def deleteBookById(self, id: str) -> str:
         # TODO: If it doesn't exist in the collection - should I return the same collection?
@@ -81,6 +84,7 @@ class BooksCollection():
         return idOfDocumentToUpdate
                 
     def __isQueryParameterSatisfiedByDocument(self, document: dict, queryKey: str, queryValue: str) -> bool:
+        # TODO: if there is a key error - need to handle it
         documentValue = document[queryKey]
         # TODO: It won't be language. How does if influence (I think authors is also a list)??? Slide 19 is not clear
         if type(documentValue) is list:

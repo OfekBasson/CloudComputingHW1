@@ -3,7 +3,8 @@ from flask import Flask
 from flask_restful import Api
 from Resources.Books import Books
 from Resources.Id import Id
-from Resources.RatingId import RatingId
+from Resources.RatingsId import RatingsId
+from Resources.Ratings import Ratings
 from Resources.Top import Top
 from Resources.Values import Values
 from Container import Container
@@ -19,9 +20,10 @@ def main() -> None:
 
     api.add_resource(Books, '/books', resource_class_kwargs={'booksCollection': container.booksCollection, 'dataValidator': container.dataValidator})
     api.add_resource(Id, '/books/<string:id>', resource_class_kwargs={'booksCollection': container.booksCollection, 'dataValidator': container.dataValidator})
-    api.add_resource(RatingId, '/rating/<string:id>', resource_class_kwargs={'ratingsCollection': container.ratingsCollection})
+    api.add_resource(Ratings, '/ratings', resource_class_kwargs={'ratingsCollection': container.ratingsCollection})
+    api.add_resource(RatingsId, '/ratings/<string:id>', resource_class_kwargs={'ratingsCollection': container.ratingsCollection})
     api.add_resource(Top, '/top', resource_class_kwargs={'ratingsCollection': container.ratingsCollection})
-    api.add_resource(Values, '//rating/<string:id>/values', resource_class_kwargs={'ratingsCollection': container.ratingsCollection})
+    api.add_resource(Values, '/rating/<string:id>/values', resource_class_kwargs={'ratingsCollection': container.ratingsCollection, 'dataValidator': container.dataValidator})
     
     app.run(host='0.0.0.0', port=8000, debug=True)
     

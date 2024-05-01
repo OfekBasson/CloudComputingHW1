@@ -1,6 +1,7 @@
 # TODO: Check if it should be here and not injected (I think it's good like that)
 from Exceptions.InvalidRequestBodyException import InvalidRequestBodyException
 from Exceptions.UnsupportedMediaTypeException import UnsupportedMediaTypeException
+from Exceptions.InternalServerException import InternalServerException
 # TODO: Add interfaces
 # TODO: Change to another name? maybe RequestBodyValidator?
 class DataValidator:    
@@ -28,7 +29,6 @@ class DataValidator:
             raise InvalidRequestBodyException(f"The genre ({genre}) isn't valid")
         
         print(f"Inside 'validateBooksPostRequestBody' (function of 'DataValidator') the data is valid ({requestBody})")
-        return
     
     def validateIdPutRequestBody(self, requestBody: dict) -> None:
         # TODO: Check if the id of the new item equals the changed id
@@ -48,4 +48,30 @@ class DataValidator:
         except KeyError as exception:
             raise InvalidRequestBodyException('One of the required fields doesnt exist in the request ("title", "ISBN", "genre", "publisher", "publishedDate", "id", "summary", "language", "authors")')
         print(f"Inside 'validateIdPutRequestBody' (function of 'DataValidator') the data is valid ({requestBody})")
-        return
+    
+    def validateDataForCreateNewRating(self, data: dict) -> None:
+        try:
+            title = data["title"]
+        except KeyError:
+            raise InternalServerException("Unexpected exception: no title field in the data provided to 'createNewRating' (function of RatingsCollection)")
+        try:
+            id = data["id"]
+        except KeyError:
+            raise InternalServerException("Unexpected exception: no id field in the data provided to 'createNewRating' (function of RatingsCollection)")
+        print(f"Inside 'validateDataForCreateNewRating' (function of 'DataValidator') the data is valid ({data})")
+
+    def validateValuesPostRequestBody(self, requestBody: dict) -> None:
+        if requestBody is None:
+            raise UnsupportedMediaTypeException("The request body is None or has unsupported type")
+        if len(requestBody) >= 1:
+            raise InvalidRequestBodyException("The request body length is greater than 1 (should be only 1 - id)")
+        try:
+            # TODO: Check it's int (is it possible to parse the request body to int?)
+            value = requestBody["value"]
+        except KeyError:
+            raise InvalidRequestBodyException("The value parameter is missing from your request body")
+        if value not in [1, 2, 3, 4, 5]:
+            raise InvalidRequestBodyException(f"The value ({value}) isn't valid")
+        
+        print(f"Inside 'validateValuesPostRequestBody' (function of 'DataValidator') the data is valid ({requestBody})")
+        

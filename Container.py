@@ -9,7 +9,7 @@ from Services.DataProcessor import DataProcessor
 class Container(containers.DeclarativeContainer):
     # TODO: Add urls to config
     # config = providers.Configuration()
-
+    
     apiInvoker = providers.Singleton(
         ApiInvoker
     )
@@ -19,16 +19,19 @@ class Container(containers.DeclarativeContainer):
         apiInvoker=apiInvoker
     )
     
-    booksCollection = providers.Singleton(
-        BooksCollection,
-        dataProcessor=dataProcessor
-    )
-    
-    ratingsCollection = providers.Singleton(
-        RatingsCollection
-    )
-    
     dataValidator = providers.Singleton(
         DataValidator
     )
+    
+    ratingsCollection = providers.Singleton(
+        RatingsCollection,
+        dataValidator = dataValidator
+    )
+    
+    booksCollection = providers.Singleton(
+        BooksCollection,
+        dataProcessor = dataProcessor,
+        ratingsCollection = ratingsCollection
+    )
+    
     
