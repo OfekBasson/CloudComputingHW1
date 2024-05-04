@@ -7,20 +7,22 @@ from flask import request
 
 class Values(Resource):
     def __init__(self, ratingsCollection: RatingsCollection, dataValidator: DataValidator) -> None:
-        self._ratingsCollection = ratingsCollection
-        self._dataValidator = dataValidator
+        self._ratingsCollection = ratingsCollection()
+        self._dataValidator = dataValidator()
         
     def post(self, id: str) -> tuple:
         # TODO: Get data as payload
-        # TODO: Implement
         try:
             requestBody = request.get_json()
+            print(f"Called POST on Values resource with requestBody: {requestBody}")
             self._dataValidator.validateValuesPostRequestBody(requestBody)
             value = requestBody["value"]
-            if not self._ratingsCollection.doRatingWithGivenIdAlreadyExist(requestBody["id"]):
-                # TODO: Is this the exception which has to be thrown?
-                raise InvalidRequestBodyException("A book with the same id doesn't exist in the collection")
+            print(f"Assigned value to: {value}")
+            if not self._ratingsCollection.doRatingWithGivenIdAlreadyExist(id):
+                raise InvalidRequestBodyException("A book with the given id doesn't exist in the ratings collection")
+            print("Didn't throw exception")
             newAverage = self._ratingsCollection.addRatingValueToBookAndReturnNewAverage(id, value)
+            print(f"newAverage is: {newAverage}")
             return newAverage, 201
         
         except InvalidRequestBodyException as exception:
@@ -29,4 +31,7 @@ class Values(Resource):
         except UnsupportedMediaTypeException as exception:
             return "Unsupported media type: " + exception.message, 415
         
-        # TODO: Should I get Internal server exception here?
+        except Exception as exception:
+            print(exception.args)
+            return "Unexpected error: " + exception.args[0], 500
+    

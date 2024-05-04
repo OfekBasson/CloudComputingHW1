@@ -43,8 +43,8 @@ class DataValidator:
             for key in ["authors", "language"]:
                 if type(requestBody[key]) is not list:
                     raise InvalidRequestBodyException('One of the provided keys which supposed to be list ("language", "authors") is not a list')
-            if requestBody["genre"] not in ['Fiction', 'Children', 'Biography', 'Science', 'Science Fiction', 'Fantasy', 'Other']:
-                raise InvalidRequestBodyException(f"The genre ({requestBody["genre"]}) isn't valid")
+            if requestBody["genre"] not in ['Fiction', 'Children', 'Biography','Science', 'Science Fiction', 'Fantasy', 'Other']:
+                raise InvalidRequestBodyException(f"The genre ({requestBody['genre']}) isn't valid")
         except KeyError as exception:
             raise InvalidRequestBodyException('One of the required fields doesnt exist in the request ("title", "ISBN", "genre", "publisher", "publishedDate", "id", "summary", "language", "authors")')
         print(f"Inside 'validateIdPutRequestBody' (function of 'DataValidator') the data is valid ({requestBody})")
@@ -63,7 +63,7 @@ class DataValidator:
     def validateValuesPostRequestBody(self, requestBody: dict) -> None:
         if requestBody is None:
             raise UnsupportedMediaTypeException("The request body is None or has unsupported type")
-        if len(requestBody) >= 1:
+        if len(requestBody) > 1:
             raise InvalidRequestBodyException("The request body length is greater than 1 (should be only 1 - id)")
         try:
             # TODO: Check it's int (is it possible to parse the request body to int?)
@@ -71,7 +71,7 @@ class DataValidator:
         except KeyError:
             raise InvalidRequestBodyException("The value parameter is missing from your request body")
         if value not in [1, 2, 3, 4, 5]:
-            raise InvalidRequestBodyException(f"The value ({value}) isn't valid")
+            raise InvalidRequestBodyException(f"The value ({value}) isn't valid, it must be one of 1/2/3/4/5")
         
         print(f"Inside 'validateValuesPostRequestBody' (function of 'DataValidator') the data is valid ({requestBody})")
         

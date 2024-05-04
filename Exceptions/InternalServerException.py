@@ -1,5 +1,5 @@
 class InternalServerException(Exception):
     
-    def __init__(self, message="Unable to connect to the service"):
+    def __init__(self, message="Unknown"):
         self.message = message
         super().__init__(self.message)

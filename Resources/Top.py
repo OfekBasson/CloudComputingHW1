@@ -3,9 +3,10 @@ from Models.RatingsCollection import RatingsCollection
 
 class Top(Resource):
     def __init__(self, ratingsCollection: RatingsCollection) -> None:
-        self._ratingsCollection = ratingsCollection
+        self._ratingsCollection = ratingsCollection()
         
     def get(self) -> tuple:
+        print("Called GET on Top resource")
         try:
             return self._ratingsCollection.getTopRatedBooks(), 200
         except:

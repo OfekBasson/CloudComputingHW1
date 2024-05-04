@@ -22,9 +22,9 @@ class Books(Resource):
     
     def post(self) -> tuple:
         # TODO: Should a book which was entered twice appear twice in the booksCollection?
-        print("Called post on Books resource")
         try:
             requestBody = request.get_json(silent=True)
+            print(f"Called post on Books resource with requestBodu: {requestBody}")
             self._dataValidator.validateBooksPostRequestBody(requestBody)
             if self._booksCollection.doBookWithGivenIsbnAlreadyExist(requestBody["ISBN"]):
                 raise InvalidRequestBodyException("A book with the same ISBN already exist in the collection")
@@ -39,22 +39,31 @@ class Books(Resource):
         
         except InternalServerException as exception:
             return "Internal server error: " + exception.message, 500
+        
+        except Exception as exception:
+            return "Unexpected error: " + exception.args[0], 500
         # TODO: Except more specific errors
         # TODO: Check if errors like unparseable json which returns 405 should be handeled
             
     def get(self) -> tuple:
         try:
-            print("Called get on Books resource")
             query = self._parser.parse_args()
+            print(f"Called GET on Books resource with query: {query}")
             # TODO: Input tests (query isn't valid for example, only one string in language/authors/,,,)
             collection = self._booksCollection.getCollectionFilteredByQuery(query)
-            if collection == []:
-                # TODO: should it be 204 (The request was successful but the response has no content)?
-                return "There aren't books matching your criteria", 404
             return collection, 200
+        
         except EmptyCollectionException as exception:
-            return exception.message, 404
-    
+            return "Empty collection: " + exception.message, 404
+        
+        except InternalServerException as exception:
+            return "Internal server error: " + exception.message, 500
+        # TODO: Should I differ Unexpected error from InternalServerError?
+        
+        except Exception as exception:
+            print(exception)
+            return "Unexpected error: ", 500
+    # TODO: How do null enter the collection?
     def __addArgumentsToParser(self) -> None:
         self._parser.add_argument('title', location='args', required=False)
         self._parser.add_argument('ISBN', location='args', required=False)

@@ -23,7 +23,7 @@ def main() -> None:
     api.add_resource(Ratings, '/ratings', resource_class_kwargs={'ratingsCollection': container.ratingsCollection})
     api.add_resource(RatingsId, '/ratings/<string:id>', resource_class_kwargs={'ratingsCollection': container.ratingsCollection})
     api.add_resource(Top, '/top', resource_class_kwargs={'ratingsCollection': container.ratingsCollection})
-    api.add_resource(Values, '/rating/<string:id>/values', resource_class_kwargs={'ratingsCollection': container.ratingsCollection, 'dataValidator': container.dataValidator})
+    api.add_resource(Values, '/ratings/<string:id>/values', resource_class_kwargs={'ratingsCollection': container.ratingsCollection, 'dataValidator': container.dataValidator})
     
     app.run(host='0.0.0.0', port=8000, debug=True)
     
