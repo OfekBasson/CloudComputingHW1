@@ -23,7 +23,7 @@ class Id(Resource):
             return "No matching item: " + exception.message, 404
         
         except Exception as exception:
-            return "Unexpected error: " + exception.args[0], 500
+            return "Unexpected error: " + exception.args, 500
         
     # TODO: Is this a tuple?
     def delete(self, id: str) -> tuple:
@@ -33,16 +33,16 @@ class Id(Resource):
             return deletedBookId
         
         except NoMatchingItemException as exception:
-            return "No matching item" + exception.message, 404
+            return "No matching item: " + exception.message, 404
         
         except Exception as exception:
-            return "Unexpected error: " + exception.args[0], 500
+            return "Unexpected error: " + exception.args, 500
         
         
     def put(self, id: str) -> tuple:
         print(f"Called PUT on Id with id: {id}")
         try:
-            requestBody = request.get_json()
+            requestBody = request.get_json(silent=True)
             self._dataValidator.validateIdPutRequestBody(requestBody)
             updatedDocumentId = self._booksCollection.updateSpecificDocumentFromCollection(id, requestBody)
             return updatedDocumentId, 200
@@ -56,7 +56,8 @@ class Id(Resource):
         except UnsupportedMediaTypeException as exception:
             return "Unsupported media type: " + exception.message, 415
         
+        # TODO: Can exception.args be bad?
         except Exception as exception:
-            return "Unexpected error: " + exception.args[0], 500
+            return "Unexpected error: " + exception.args, 500
         # TODO: Except more errors
         # TODO: Check if errors like unparseable json which returns 405 should be handeled

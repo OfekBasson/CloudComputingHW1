@@ -33,5 +33,5 @@ class Values(Resource):
         
         except Exception as exception:
             print(exception.args)
-            return "Unexpected error: " + exception.args[0], 500
+            return "Unexpected error: " + exception.args, 500
     

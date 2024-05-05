@@ -10,6 +10,7 @@ from Exceptions.InvalidRequestBodyException import InvalidRequestBodyException
 from Exceptions.UnsupportedMediaTypeException import UnsupportedMediaTypeException
 from Exceptions.InternalServerException import InternalServerException
 from Exceptions.EmptyCollectionException import EmptyCollectionException
+from Exceptions.NoMatchingItemsInApiGetCallException import NoMatchingItemsInApiGetCallException
 
 class Books(Resource):        
     def __init__(self, booksCollection: BooksCollection, dataValidator: DataValidator) -> None:
@@ -37,11 +38,15 @@ class Books(Resource):
         except UnsupportedMediaTypeException as exception:
             return "Unsupported media type: " + exception.message, 415
         
+        except NoMatchingItemsInApiGetCallException as exception:
+            # TODO: What to do with this?
+            return requestBody
+        
         except InternalServerException as exception:
             return "Internal server error: " + exception.message, 500
         
         except Exception as exception:
-            return "Unexpected error: " + exception.args[0], 500
+            return "Unexpected error: " + exception.args, 500
         # TODO: Except more specific errors
         # TODO: Check if errors like unparseable json which returns 405 should be handeled
             
@@ -56,9 +61,12 @@ class Books(Resource):
         except EmptyCollectionException as exception:
             return "Empty collection: " + exception.message, 404
         
+        # TODO: Should I differ Unexpected error from InternalServerError?
         except InternalServerException as exception:
             return "Internal server error: " + exception.message, 500
-        # TODO: Should I differ Unexpected error from InternalServerError?
+        
+        except InvalidRequestBodyException as exception:
+            return "Unprocessable Content: " + exception.message, 422
         
         except Exception as exception:
             print(exception)

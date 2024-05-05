@@ -7,8 +7,6 @@ from Services.ApiInvoker import ApiInvoker
 from Services.DataProcessor import DataProcessor
 
 class Container(containers.DeclarativeContainer):
-    # TODO: Add urls to config
-    # config = providers.Configuration()
     
     apiInvoker = providers.Singleton(
         ApiInvoker

@@ -18,7 +18,7 @@ class ApiInvoker:
         except Exception as exception:
             if response.json()['totalItems'] == 0:
                 raise NoMatchingItemsInApiGetCallException(f"No items returned from Google Book API for given ISBN number ({isbn})")
-            # TODO: Will it work?
+            # TODO: Will it work? in slide 22 he asked this
             if exception == "unable to connect to Google":
                 raise InternalServerException("Unable to connect to google") 
             raise exception       

@@ -45,7 +45,7 @@ class RatingsCollection():
         originalCollectionLength = len(self._collection)
         self._collection = [document for document in self._collection if document["id"] != id]
         if len(self._collection) == originalCollectionLength:
-            raise NoMatchingItemException("The id which was asked to be deleted doesn't exist")
+            raise NoMatchingItemException(f"The id which was asked to be deleted ({id}) doesn't exist")
         
     def addRatingValueToBookAndReturnNewAverage(self, id: str, value: int) -> float:
         print(f"Inside 'addRatingValueToBookAndReturnNewAverage' (function of RatingsCollection) with id: {id} and value: {value}")
@@ -63,6 +63,7 @@ class RatingsCollection():
         except NoMatchingItemException:
             return False
         # TODO: What id there another exception
+        
     
     def __getListOfObjectsContainingOnlyIdTitleAverage(self, listForProcessing) -> list:
         return list(map(lambda item: {"id": item["id"], "title": item["title"], "average": item["average"]}, listForProcessing))

@@ -24,7 +24,7 @@ class Ratings(Resource):
             return "No matching item: " + exception.message, 404
 
         except Exception as exception:
-            return "Unexpected error: " + exception.args[0], 500
+            return "Unexpected error: " + exception.args, 500
         
     def __addArgumentsToParser(self) -> None:
         self._parser.add_argument('id', location='args', required=True)

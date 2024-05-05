@@ -1,5 +1,4 @@
 from flask import Flask
-# TODO: are all those imports necessary?
 from flask_restful import Api
 from Resources.Books import Books
 from Resources.Id import Id
@@ -8,7 +7,6 @@ from Resources.Ratings import Ratings
 from Resources.Top import Top
 from Resources.Values import Values
 from Container import Container
-from Models.BooksCollection import BooksCollection
 # TODO: Check why the Provide isn't in use
 from dependency_injector.wiring import Provide, inject
 

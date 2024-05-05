@@ -29,7 +29,7 @@ class DataProcessor():
             
         # TODO: Change handling to more specific row... return something
         except Exception as exception:
-            raise InternalServerException(f"Unable to construct full data for partial book data {partialBookData}. Exception is: {exception.args[0]}")
+            raise InternalServerException(f"Unable to construct full data for partial book data {partialBookData}. Exception is: {exception.args}")
         
     def __combineDataFromRequestAndApiCalls(self, requestBody: dict, bookData: dict, language: list, summary: str) -> dict:
         print(f"Inside '__combineDataFromRequestAndApiCalls' (private function of DataProcessor) with requestBody: {requestBody}, bookData: {bookData}, language: {language} and summary: {summary}")
@@ -45,8 +45,9 @@ class DataProcessor():
         print(f"Inside '__getBookData' (private function of DataProcessor) with ISBN: {isbn}")
         try:
             bookData = self._apiInvoker.sendGetRequestToGoogleBooksApiAndReturnBookData(isbn)
+            # TODO: He wrote in slide 14 "if OpenAPI does not return any languages for the book, then the languages field will be a list of the form [“missing”]". In another slide he asked co concatenate and return a string. What is true?
             for key in bookData:
-                if bookData[key] == "":
+                if bookData[key] == "" or bookData[key] is None:
                     bookData[key] = "missing"
         except NoMatchingItemsInApiGetCallException as exception:
             bookData = {
@@ -54,7 +55,6 @@ class DataProcessor():
             "publisher": "missing",
             "publishedDate": "missing"
             }
-            # TODO: add logs?
         return bookData
     
     def __getLanguage(self, isbn: str) -> list:
