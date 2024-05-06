@@ -9,15 +9,10 @@ class DataProcessor():
     def __init__(self, apiInvoker: ApiInvoker) -> None:
         self._apiInvoker = apiInvoker
     
-    # TODO: Check if a book already exists
     def constructFullBookData(self, partialBookData: dict) -> dict:
         print(f"Inside 'constructFullBookData'. Constructing foll data to partialBookData: {partialBookData}")
-        # TODO: Handle missing data (slide 14)
         try:
             isbn = partialBookData["ISBN"]            
-            
-            # TODO: add asynchronous handling
-            # bookData, language, summary = await asyncio.gather((self.__getBookData(isbn), self.__getLanguage(isbn), self.__getBookSummary(partialBookData["title"], bookData["authors"])))
             bookData = self.__getBookData(isbn)
             language = self.__getLanguage(isbn)
             summary = self.__getBookSummary(partialBookData["title"], bookData["authors"])
@@ -27,7 +22,9 @@ class DataProcessor():
             
             return fullData
             
-        # TODO: Change handling to more specific row... return something
+        except NoMatchingItemsInApiGetCallException:
+            raise
+        
         except Exception as exception:
             raise InternalServerException(f"Unable to construct full data for partial book data {partialBookData}. Exception is: {exception.args}")
         
@@ -43,18 +40,11 @@ class DataProcessor():
     
     def __getBookData(self, isbn: str) -> dict:
         print(f"Inside '__getBookData' (private function of DataProcessor) with ISBN: {isbn}")
-        try:
-            bookData = self._apiInvoker.sendGetRequestToGoogleBooksApiAndReturnBookData(isbn)
-            # TODO: He wrote in slide 14 "if OpenAPI does not return any languages for the book, then the languages field will be a list of the form [“missing”]". In another slide he asked co concatenate and return a string. What is true?
-            for key in bookData:
-                if bookData[key] == "" or bookData[key] is None:
-                    bookData[key] = "missing"
-        except NoMatchingItemsInApiGetCallException as exception:
-            bookData = {
-            "authors": "missing",
-            "publisher": "missing",
-            "publishedDate": "missing"
-            }
+        bookData = self._apiInvoker.sendGetRequestToGoogleBooksApiAndReturnBookData(isbn)
+        for key in bookData:
+            if bookData[key] == "" or bookData[key] is None:
+                bookData[key] = "missing"
+
         return bookData
     
     def __getLanguage(self, isbn: str) -> list:
@@ -63,10 +53,8 @@ class DataProcessor():
             language = self._apiInvoker.sendGetRequestToOpenApiLibraryAndReturnLanguages(isbn)
         except NoMatchingItemsInApiGetCallException:
             language = ["missing"]
-            # TODO: add logs?
         return language
     
-    # TODO: Add type for title and authors
     def __getBookSummary(self, title: str, authors: list) -> str:
         print(f"Inside '__getBookSummary' (private function of DataProcessor) with title: {title} and authors: {authors}")
         try:
@@ -74,14 +62,12 @@ class DataProcessor():
             bookSummary = self._apiInvoker.sendGetRequestToGoogleGenAIAndReturnBookSummary(title, firstAuthorName)
         except NoMatchingItemsInApiGetCallException:
             bookSummary = "missing"
-            # TODO: add logs?
         return bookSummary   
     
     def __postProcessData(self, data: dict) -> None:
         print(f"Inside '__postProcessData (private function of DataProcessor) with data: {data}")
         data["publishedDate"] = self.__getValidDate(data["publishedDate"])
         data["authors"] = self.__concatenateListToString(data["authors"])
-        # TODO: Implement
         return 
     
     def __getValidDate(self, dateString: str) -> str:

@@ -1,4 +1,3 @@
-# TODO: Add readme
 from Models.BooksCollection import BooksCollection
 from flask_restful import Resource, reqparse
 from dependency_injector.wiring import Provide, inject
@@ -10,8 +9,6 @@ from flask import request
 
 class Id(Resource):
     def __init__(self, booksCollection: BooksCollection, dataValidator: DataValidator) -> None:
-        # TODO: Check if it creates another one
-        # TODO: Should I add super.__init__()? Does it invoke it automatically if I don't have a constructor?
         self._booksCollection = booksCollection()
         self._dataValidator = dataValidator()
     
@@ -25,7 +22,6 @@ class Id(Resource):
         except Exception as exception:
             return "Unexpected error: " + exception.args, 500
         
-    # TODO: Is this a tuple?
     def delete(self, id: str) -> tuple:
         print(f"Called DELETE on Id with id: {id}")
         try:
@@ -56,8 +52,5 @@ class Id(Resource):
         except UnsupportedMediaTypeException as exception:
             return "Unsupported media type: " + exception.message, 415
         
-        # TODO: Can exception.args be bad?
         except Exception as exception:
             return "Unexpected error: " + exception.args, 500
-        # TODO: Except more errors
-        # TODO: Check if errors like unparseable json which returns 405 should be handeled

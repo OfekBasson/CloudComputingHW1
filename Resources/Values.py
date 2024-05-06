@@ -11,7 +11,6 @@ class Values(Resource):
         self._dataValidator = dataValidator()
         
     def post(self, id: str) -> tuple:
-        # TODO: Get data as payload
         try:
             requestBody = request.get_json()
             print(f"Called POST on Values resource with requestBody: {requestBody}")
@@ -35,3 +34,6 @@ class Values(Resource):
             print(exception.args)
             return "Unexpected error: " + exception.args, 500
     
+# TODO: read this: https://moodle.runi.ac.il/2024/mod/forum/discuss.php?d=12679
+# TODO: Read this and follow instructions: https://moodle.runi.ac.il/2024/mod/forum/discuss.php?d=12877
+# TODO: Read this after docker part

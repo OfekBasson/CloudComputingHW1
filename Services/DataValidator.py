@@ -1,18 +1,12 @@
-# TODO: Check if it should be here and not injected (I think it's good like that)
 from Exceptions.InvalidRequestBodyException import InvalidRequestBodyException
 from Exceptions.UnsupportedMediaTypeException import UnsupportedMediaTypeException
 from Exceptions.InternalServerException import InternalServerException
-# TODO: Add interfaces
-# TODO: Change to another name? maybe RequestBodyValidator?
 class DataValidator:    
     def validateBooksPostRequestBody(self, requestBody: dict) -> None:
-        # TODO: Check if I can return this also if requestBody is actually None and not only if it's unsupported media type
         if requestBody is None:
             raise UnsupportedMediaTypeException("The request body is None or has unsupported type")
-        # TODO: Doesn't appear in the instructions. Make sure that it's ok
         if len(requestBody) >= 4:
             raise InvalidRequestBodyException("The request body length is greater than 3 (should be only 3 - title, ISBN, genre)")
-        # TODO: How to handle capital letters as keys (for example "Title")?
         try:
             title = requestBody["title"]
         except KeyError:
@@ -31,16 +25,12 @@ class DataValidator:
         print(f"Inside 'validateBooksPostRequestBody' (function of 'DataValidator') the data is valid ({requestBody})")
     
     def validateIdPutRequestBody(self, requestBody: dict) -> None:
-        # TODO: Check if the id of the new item equals the changed id
-        # TODO: How to handle capital letters as keys (for example "Title")?
         try:
             if requestBody is None:
                 raise UnsupportedMediaTypeException("The request body is None or has unsupported type")
-            # TODO: Assuming authors isn't a list but a string
             for key in ["title", "ISBN", "genre", "publisher", "publishedDate", "id", "summary", "authors"]:
                 if type(requestBody[key]) is not str:
                     raise InvalidRequestBodyException('One of the provided keys which supposed to be string ("title", "ISBN", "genre", "publisher", "publishedDate", "id", "summary") is not a string')
-            # TODO: It won't be summary/language. How does it influence the code?
             for key in ["language"]:
                 if type(requestBody[key]) is not list:
                     raise InvalidRequestBodyException('One of the provided keys which supposed to be list ("language", "authors") is not a list')
@@ -67,7 +57,6 @@ class DataValidator:
         if len(requestBody) > 1:
             raise InvalidRequestBodyException("The request body length is greater than 1 (should be only 1 - id)")
         try:
-            # TODO: Check it's int (is it possible to parse the request body to int?)
             value = requestBody["value"]
         except KeyError:
             raise InvalidRequestBodyException("The value parameter is missing from your request body")

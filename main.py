@@ -7,10 +7,8 @@ from Resources.Ratings import Ratings
 from Resources.Top import Top
 from Resources.Values import Values
 from Container import Container
-# TODO: Check why the Provide isn't in use
-from dependency_injector.wiring import Provide, inject
+from dependency_injector.wiring import inject
 
-# TODO: Check why the @inject is for 
 @inject
 def main() -> None:
     app = Flask(__name__)

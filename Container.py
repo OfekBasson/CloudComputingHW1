@@ -1,4 +1,3 @@
-# TODO: Check where all my dependencies are (should be in the docker container)
 from dependency_injector import containers, providers
 from Models.BooksCollection import BooksCollection
 from Models.RatingsCollection import RatingsCollection

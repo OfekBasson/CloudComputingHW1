@@ -2,27 +2,20 @@ from Services.DataValidator import DataValidator
 from Exceptions.NoMatchingItemException import NoMatchingItemException
 
 class RatingsCollection():
-    # TODO: Make sure float has only 2 digits after floating point
     def __init__(self, dataValidator: DataValidator) -> None:
         self._collection = []
         self._dataValidator = dataValidator
         
     def getRatingById(self, id: str) -> dict:
-        # TODO: Should return all the json/without the values: []?
         print(f"Inside 'getRatingsById' (function of RatingsCollection) with id: {id}")
         for rating in self._collection:
             if rating["id"] == id:
                 return rating
         raise NoMatchingItemException(f"There is no book with the given id: {id}")
-        # TODO: Is it ok to return dict instead of a json? I think it will become a json in the api call
     
-    # TODO: Questions from the paper on the table
-    # TODO: Questions from forum
-    # TODO: Check why I have to save another array with the top scores? It's unnecessary duplication...
     def getTopRatedBooks(self) -> list:
         print("Inside 'getTopRatedBooks' (function of RatingsCollection)")
         topRatedBooks = []
-        # TODO: Check if 100 is good
         lastRatingAverage = 100
         ratingsWith3RatingsOrMore = list(filter(lambda rating: len(rating["values"]) >= 3, self._collection))
         sortedRatingsCollectionWith3RatingsOrMore = sorted(ratingsWith3RatingsOrMore, key=lambda rating: rating["average"])
@@ -60,10 +53,11 @@ class RatingsCollection():
         try:
             rating = self.getRatingById(id)
             return True
+
         except NoMatchingItemException:
             return False
-        # TODO: What id there another exception
         
     
     def __getListOfObjectsContainingOnlyIdTitleAverage(self, listForProcessing) -> list:
         return list(map(lambda item: {"id": item["id"], "title": item["title"], "average": item["average"]}, listForProcessing))
+    
