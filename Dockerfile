@@ -14,6 +14,4 @@ RUN  pip install datetime
 
 EXPOSE 8000
 
-ENV API_KEY="AIzaSyDZ-DCljJFFfiKF7gKJIZIvOQg4NijXY4k"
-
 CMD ["python3", "main.py"]
