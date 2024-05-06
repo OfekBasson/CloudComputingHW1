@@ -1,9 +1,9 @@
+from flask import request
 from flask_restful import Resource
 from Models.RatingsCollection import RatingsCollection
 from Services.DataValidator import DataValidator
 from Exceptions.InvalidRequestBodyException import InvalidRequestBodyException
 from Exceptions.UnsupportedMediaTypeException import UnsupportedMediaTypeException
-from flask import request
 
 class Values(Resource):
     def __init__(self, ratingsCollection: RatingsCollection, dataValidator: DataValidator) -> None:

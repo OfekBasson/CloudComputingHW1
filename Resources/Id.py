@@ -1,6 +1,5 @@
+from flask_restful import Resource
 from Models.BooksCollection import BooksCollection
-from flask_restful import Resource, reqparse
-from dependency_injector.wiring import Provide, inject
 from Exceptions.NoMatchingItemException import NoMatchingItemException
 from Exceptions.InvalidRequestBodyException import InvalidRequestBodyException
 from Exceptions.UnsupportedMediaTypeException import UnsupportedMediaTypeException

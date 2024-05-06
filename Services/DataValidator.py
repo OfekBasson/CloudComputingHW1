@@ -1,6 +1,7 @@
 from Exceptions.InvalidRequestBodyException import InvalidRequestBodyException
 from Exceptions.UnsupportedMediaTypeException import UnsupportedMediaTypeException
 from Exceptions.InternalServerException import InternalServerException
+
 class DataValidator:    
     def validateBooksPostRequestBody(self, requestBody: dict) -> None:
         if requestBody is None:
