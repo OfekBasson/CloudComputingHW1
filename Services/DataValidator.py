@@ -31,7 +31,7 @@ class DataValidator:
                 raise UnsupportedMediaTypeException("The request body is None or has unsupported type")
             for key in ["title", "ISBN", "genre", "publisher", "publishedDate", "id", "summary", "authors"]:
                 if type(requestBody[key]) is not str:
-                    raise InvalidRequestBodyException('One of the provided keys which supposed to be string ("title", "ISBN", "genre", "publisher", "publishedDate", "id", "summary") is not a string')
+                    raise InvalidRequestBodyException(f'{key} which supposed to be string ("title", "ISBN", "genre", "publisher", "publishedDate", "id", "summary") is not a string')
             for key in ["language"]:
                 if type(requestBody[key]) is not list:
                     raise InvalidRequestBodyException('One of the provided keys which supposed to be list ("language", "authors") is not a list')

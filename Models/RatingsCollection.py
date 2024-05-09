@@ -28,10 +28,16 @@ class RatingsCollection():
         return self.__getListOfObjectsContainingOnlyIdTitleAverage(topRatedBooks)
     
     
-    def createNewRating(self, data: dict) -> None:
-        print(f"Inside 'createNewRating' (function of RatingsCollection) with data: {data}")
+    def createNewRating(self, data: dict, initialValues: list = None) -> None:
+        print(f"Inside 'createNewRating' (function of RatingsCollection) with data: {data}.\ninitialValues is: {initialValues}")
         self._dataValidator.validateDataForCreateNewRating(data)
-        self._collection.append({"id": data["id"], "title": data["title"], "values": [], "average": 0})
+        values = initialValues if initialValues is not None else []
+        average = 0 
+        if initialValues is not None and initialValues != []:
+            print(f'initialValues is: {initialValues}')
+            average = round((sum(initialValues) / len(initialValues)), 2)
+        self._collection.append({"id": data["id"], "title": data["title"], "values": values, "average": average})
+        
 
     def deleteRating(self, id: str) -> None:
         print(f"Inside 'deleteRating' (function of RatingsCollection) with id: {id}")

@@ -52,4 +52,4 @@ class Id(Resource):
             return "Unsupported media type: " + exception.message, 415
         
         except Exception as exception:
-            return "Unexpected error: " + exception.args, 500
+            return "Unexpected error: " + exception.args[0], 500

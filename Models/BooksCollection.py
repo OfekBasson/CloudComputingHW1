@@ -68,15 +68,20 @@ class BooksCollection():
         try:
             print(f"Inside 'updateSpecificDocumentFromCollection' (function of 'BooksCollection') with idOfDocumentToUpdate: {idOfDocumentToUpdate} and requestBody: {requestBody}")
             updatedResourceId = requestBody["id"]
+            valuesList = self.__getRatingsValuesList(idOfDocumentToUpdate)
             self.deleteBookById(idOfDocumentToUpdate)
             self._collection.append(requestBody)
-            self._ratingsCollection.createNewRating(requestBody)
+            self._ratingsCollection.createNewRating(requestBody, valuesList)
             return updatedResourceId
         
         except KeyError:
             raise InvalidRequestBodyException(f"The request body has no 'id' field. Request body is: {requestBody}")
         
             
+    def __getRatingsValuesList(self, id: str) -> list:
+        print(f"Inside '__getRatingsValuesList' (function of 'BooksCollection') with id: {id}")
+        return self._ratingsCollection.getRatingById(id)["values"]
+    
     def __isQueryParameterSatisfiedByDocument(self, document: dict, queryKey: str, queryValue: str) -> bool:
         print(f"Inside '__isQueryParameterSatisfiedByDocument' (function of 'BooksCollection') with document: {document} and query: {queryKey}={queryValue}")
         documentValue = document[queryKey]

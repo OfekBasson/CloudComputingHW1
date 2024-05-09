@@ -8,9 +8,12 @@ from Resources.Top import Top
 from Resources.Values import Values
 from Container import Container
 from dependency_injector.wiring import inject
+import os
 
 @inject
 def main() -> None:
+    os.environ["API_KEY"] = "AIzaSyDZ-DCljJFFfiKF7gKJIZIvOQg4NijXY4k"
+    
     app = Flask(__name__)
     api = Api(app)
 
